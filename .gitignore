@@ -1,0 +1,4 @@
+.venv/
+__pycache__/
+models/googleNews_w2v_model
+models/googleNews_w2v_model.vectors.npy

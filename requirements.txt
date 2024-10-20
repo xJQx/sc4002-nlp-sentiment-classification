@@ -1,0 +1,7 @@
+pandas
+numpy
+datasets
+nltk
+gensim
+dill
+ipykernel
