@@ -12,6 +12,7 @@ def train(
         optimizer,
         train_dataloader: DataLoader,
         val_dataloader: DataLoader,
+        min_epoch: int = 20,
         max_epoch: int = 10_000,
         max_non_increasing_epoch_count: int = 10
     ):
@@ -26,8 +27,8 @@ def train(
             - `optimizer`: Optimizer function
             - `train_dataloader`: Dataset for training
             - `val_dataloader`: Dataset for validation
-            - `max_epoch`: Maximum Epoch for training
-            - `max_non_increasing_epoch_count`: For early termination of model training
+            - `min_epoch`: Minimum Epoch for training
+            - `max_non_increasing_epoch_count`: For termination of model training
     """
     avg_train_loss, avg_train_acc = [], []
     avg_val_loss, avg_val_acc = [], []
@@ -47,11 +48,15 @@ def train(
         avg_val_acc.append(epoch_val_acc)
 
         # Check if epoch validation accuracy score is increasing.
-        # Stop model training when validation accuracy does not increase for a few epochs
-        if len(avg_val_acc) > 1 and avg_val_acc[-1] <= avg_val_acc[-2]:
+        # Stop model training when validation accuracy does not increase for a few epochs (starting from 20 epochs onwards)
+        window_size = max(non_increasing_epoch_count, max_non_increasing_epoch_count)
+        recent_highest_seen = max(avg_val_acc[-2: -2-window_size: -1]) if num_of_epochs >= window_size else 0 # Maximum validation accuracy seen in the recent window
+        if num_of_epochs >= min_epoch and avg_val_acc[-1] <= recent_highest_seen:
             non_increasing_epoch_count += 1
             if non_increasing_epoch_count >= max_non_increasing_epoch_count:
-                break
+                # Ensure best weights are returned
+                if avg_val_acc[-1] == recent_highest_seen:
+                    break
         else:
             non_increasing_epoch_count = 0
     
@@ -138,6 +143,30 @@ def __validate(
                 t.update(1)
             
     return np.mean(val_loss), np.mean(val_acc)
+
+def test(
+        model,
+        criterion, 
+        test_dataloader: DataLoader
+    ):
+    model.eval()
+    
+    test_loss, test_acc = [], []
+    
+    with torch.no_grad():
+        for i, (sentences, labels) in enumerate(test_dataloader):
+            predictions = model(sentences)
+            
+            # compute loss
+            loss = criterion(predictions, labels)
+            test_loss.append(loss.detach().numpy()) 
+            
+            # compute accuracy
+            acc = __binary_accuracy(predictions, labels)
+            test_acc.append(acc)
+
+    return np.mean(test_loss), np.mean(test_acc)
+
 
 def plot_loss_acc_graph(
         loss_list: list[float], 
