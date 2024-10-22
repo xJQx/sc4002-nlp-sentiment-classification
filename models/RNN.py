@@ -32,15 +32,14 @@ class RNN(nn.Module):
         output, hidden = self.rnn(x)
         
         # use last hidden state as sentence representation
-        match self.sentence_representation_type:
-            case "last":
-                sentence_representation = hidden[-1]
-            case "max":
-                # TODO
-                pass
-            case "average":
-                # TODO
-                pass
+        if self.sentence_representation_type == "last":
+            sentence_representation = hidden[-1]
+        elif self.sentence_representation_type == "max":
+            # TODO
+            pass
+        elif self.sentence_representation_type == "average":
+            # TODO
+            pass
 
         # non-linear layer
         sentence_representation = self.relu(sentence_representation)
