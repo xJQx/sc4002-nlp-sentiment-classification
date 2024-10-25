@@ -3,8 +3,6 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from torch.utils.data import DataLoader
-import matplotlib.pyplot as plt
-from utils.file import _makeDir_if_does_not_exist
 
 def train(
         model,
@@ -182,46 +180,3 @@ def test(
     return np.mean(test_loss), np.mean(test_acc)
 
 
-def plot_loss_acc_graph(
-        loss_list: list[float], 
-        acc_list: list[float],
-        dataset_type: str,
-        subtitle: str,
-        save_filename_prefix: str = None,
-        display: bool =True
-    ):
-    if save_filename_prefix.startswith("/"): save_filename_prefix = save_filename_prefix[1:]
-    # Create save directory if does not exist
-    if save_filename_prefix:
-        dir_name = os.path.dirname(save_filename_prefix)
-        if dir_name != "" and dir_name != "/":
-            _makeDir_if_does_not_exist(f"plots/{dir_name}")
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))  # 1 row, 2 columns
-
-    epoch_counts = [c for c in range(1, len(loss_list)+1)]
-
-    # Overall Title for the figure
-    fig.suptitle(f"({dataset_type}) {subtitle}", fontsize=16)
-
-    # Loss
-    ax1.plot(epoch_counts, loss_list)
-    ax1.set_xlabel("Epoch Number")
-    ax1.set_ylabel("Loss")
-    ax1.set_title("Loss vs Epoch Number")
-    ax1.grid(True)
-
-    # Accuracy
-    ax2.plot(epoch_counts, acc_list, color="red")
-    ax2.set_xlabel("Epoch Number")
-    ax2.set_ylabel("Accuracy")
-    ax2.set_title("Accuracy vs Epoch Number")
-    ax2.grid(True)
-    
-    if save_filename_prefix:
-        plt.savefig(f"plots/{save_filename_prefix}_{dataset_type}_loss_accuracy.png")
-    if display:
-        plt.show()
-
-    # Reset plot
-    plt.close()

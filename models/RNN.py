@@ -19,7 +19,7 @@ class RNN(nn.Module):
         
         # rnn layer
         self.rnn = nn.RNN(embedding_dim, hidden_dim, num_layers, batch_first=True)
-
+        
         # non-linear layer
         self.relu = nn.ReLU()
         
@@ -35,11 +35,9 @@ class RNN(nn.Module):
         if self.sentence_representation_type == "last":
             sentence_representation = hidden[-1]
         elif self.sentence_representation_type == "max":
-            # TODO
-            pass
+            sentence_representation, _ = torch.max(output, dim=1)
         elif self.sentence_representation_type == "average":
-            # TODO
-            pass
+            sentence_representation = torch.mean(output, dim=1)
 
         # non-linear layer
         sentence_representation = self.relu(sentence_representation)
