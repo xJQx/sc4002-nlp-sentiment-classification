@@ -6,3 +6,5 @@ gensim
 dill
 ipykernel
 matplotlib
+lightning
+tensorboard
