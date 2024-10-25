@@ -1,29 +1,23 @@
 import re
+
 import nltk
 import pandas as pd
+
+from datasets import Dataset
 
 nltk.download("punkt")
 nltk.download("treebank")
 nltk.download("punkt_tab")
 
 
-def preprocess_text(dataframe: pd.DataFrame, text_column: str = "text") -> pd.Series:
-    if text_column not in dataframe.columns:
-        raise KeyError(f"'{text_column}' column not found in the dataframe.")
+def tokenize(dataset: Dataset, text_column: str = "text") -> pd.Series:
+    def _tokenize(examples):
+        text = examples[text_column].lower()
+        # Remove numbers, non-alphabetical symbols and trailing white spaces.
+        cleaned_text = re.sub("[^a-z]", " ", text).strip()
+        tokens = nltk.tokenize.word_tokenize(cleaned_text)
+        return {"tokens": tokens}
 
-    valid_texts = dataframe[text_column].dropna().astype(str)
+    filter_na = lambda example: example[text_column] is not None
 
-    return valid_texts.apply(tokenize_sentence).tolist()
-
-
-def tokenize_sentence(text: str) -> list[str]:
-    text = re.sub("[^a-zA-Z]", " ", text)  # remove numbers and non-alphabetical symbols
-    text = text.lower()  # lower case
-    text = text.strip()
-
-    if isinstance(text, str):
-        tokens = nltk.tokenize.word_tokenize(text)
-    else:
-        raise Exception("Input is not a valid string.")
-
-    return tokens
+    return dataset.filter(filter_na).map(_tokenize)
