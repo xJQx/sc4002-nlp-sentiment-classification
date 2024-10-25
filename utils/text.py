@@ -13,7 +13,7 @@ nltk.download("punkt_tab")
 def tokenize(
     dataset: Dataset,
     text_column: str = "text",
-    max_len: int = 128,
+    max_len: int = 64,
     pad_token: str = "<PAD>",
 ) -> Dataset:
     def _tokenize(examples):
