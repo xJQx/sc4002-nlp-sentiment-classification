@@ -108,7 +108,7 @@ class RNNClassifier(L.LightningModule):
         self.lr = lr
         self.show_progress = show_progress
         self.metric = MulticlassAccuracy(num_classes=2)
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=["rnn_model"])
 
     def training_step(self, batch, batch_idx):
         indexes = batch["indexes"]
