@@ -1,8 +1,6 @@
 import re
 
 import nltk
-import numpy as np
-import pandas as pd
 
 from datasets import Dataset
 
@@ -22,6 +20,7 @@ def tokenize(
         # Remove numbers, non-alphabetical symbols and trailing white spaces.
         cleaned_text = re.sub("[^a-z]", " ", text).strip()
         tokens = nltk.tokenize.word_tokenize(cleaned_text)
+        original_len = min(len(tokens), max_len)
 
         # Pad or truncate to the max_length
         if len(tokens) > max_len:
@@ -29,7 +28,7 @@ def tokenize(
         else:
             tokens += [pad_token] * (max_len - len(tokens))
 
-        return {"tokens": tokens}
+        return {"tokens": tokens, "original_len": original_len}
 
     filter_na = lambda example: example[text_column] is not None
 
@@ -48,7 +47,7 @@ def token_to_index(
         for token in sentence_tokens:
             index = index_from_word.get(token, None)
 
-            if index or keep_oov_token:
+            if index is not None or keep_oov_token:
                 indexes.append(index)
 
         return {"indexes": indexes}
