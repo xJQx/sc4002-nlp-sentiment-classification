@@ -1,6 +1,7 @@
 import re
 
 import nltk
+import numpy as np
 
 from datasets import Dataset
 
@@ -38,7 +39,7 @@ def tokenize(
 def token_to_index(
     dataset: Dataset,
     index_from_word: dict,
-    keep_oov_token: bool = False,
+    unk_token_id: int = 1,
 ) -> Dataset:
     def _token_to_index(example):
         indexes = []
@@ -47,8 +48,10 @@ def token_to_index(
         for token in sentence_tokens:
             index = index_from_word.get(token, None)
 
-            if index is not None or keep_oov_token:
+            if index is not None:
                 indexes.append(index)
+            else:
+                indexes.append(unk_token_id)
 
         return {"indexes": indexes}
 
