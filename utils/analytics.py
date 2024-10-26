@@ -15,7 +15,7 @@ def load_tensorboard_logs(log_dir):
     Returns:
     - pd.DataFrame: A DataFrame with final epoch metrics.
     """
-    metrics = ["val_loss", "val_acc", "train_loss", "train_acc"]
+    metrics = ["val_loss", "val_acc", "train_loss", "train_acc", "epoch"]
 
     log_dir = Path(log_dir)
     log_file_names = list(log_dir.rglob("events.out.tfevents*"))
@@ -48,7 +48,6 @@ def load_tensorboard_logs(log_dir):
             final_epoch_data["sentence_representation_type"] = match.group(6)
         else:
             print(f"Filename pattern does not match for {log_path}")
-
         for metric in metrics:
             if metric in event_acc.Tags()["scalars"]:
                 events = event_acc.Scalars(metric)
@@ -56,7 +55,6 @@ def load_tensorboard_logs(log_dir):
                 final_event = events[-1] if events else None
                 if final_event:
                     final_epoch_data[metric] = final_event.value
-                    final_epoch_data["steps"] = final_event.step
 
         results.append(final_epoch_data)
 
@@ -71,7 +69,7 @@ def load_tensorboard_logs(log_dir):
         "optimizer_name",
         "num_layers",
         "sentence_representation_type",
-        "steps",
+        "epoch",
         "train_loss",
         "val_loss",
         "filename",
