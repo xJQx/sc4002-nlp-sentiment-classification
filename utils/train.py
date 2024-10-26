@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import lightning as L
@@ -27,6 +28,7 @@ def train_rnn_model_with_parameters(
 ):
     min_epochs = 20
     max_epochs = 10_000
+    num_workers = os.cpu_count() // 2
 
     L.seed_everything(seed)
 
@@ -44,9 +46,18 @@ def train_rnn_model_with_parameters(
         lr=learning_rate,
         show_progress=show_progress,
     )
-
-    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    train_dataloader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+    )
+    val_dataloader = DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+    )
 
     # Train model.
     log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sentence_representation_type_{sentence_representation_type}"
