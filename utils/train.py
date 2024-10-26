@@ -23,7 +23,7 @@ def train_rnn_model_with_parameters(
     show_progress: bool = True,
     seed: int = 42,
     log_dir: str = "rnn/test",
-    early_stopping_patience: int = 5,
+    early_stopping_patience: int = 3,
 ):
     min_epochs = 20
     max_epochs = 10_000
@@ -52,7 +52,8 @@ def train_rnn_model_with_parameters(
     log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sentence_representation_type_{sentence_representation_type}"
 
     # Skip if run before
-    if Path().rglob(log_file_name):
+    if list(Path().rglob(log_file_name)):
+        print(f"[Skipping] {log_file_name}")
         return
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
