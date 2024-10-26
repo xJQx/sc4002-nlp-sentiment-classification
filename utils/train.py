@@ -73,7 +73,12 @@ def train_rnn_model_with_parameters(
             monitor="val_loss",
             mode="min",
             patience=early_stopping_patience,
-        )
+        ),
+        EarlyStopping(
+            monitor="val_acc",
+            mode="max",
+            patience=100,
+        ),
     ]
     trainer = L.Trainer(
         default_root_dir="models/",
