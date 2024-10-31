@@ -48,13 +48,18 @@ def load_tensorboard_logs(log_dir):
             final_epoch_data["sentence_representation_type"] = match.group(6)
         else:
             print(f"Filename pattern does not match for {log_path}")
+
         for metric in metrics:
             if metric in event_acc.Tags()["scalars"]:
                 events = event_acc.Scalars(metric)
 
-                final_event = events[-1] if events else None
-                if final_event:
-                    final_epoch_data[metric] = final_event.value
+                if metric == "val_acc" and events:
+                    max_val_acc = max([event.value for event in events])
+                    final_epoch_data["val_acc"] = max_val_acc
+                else:
+                    final_event = events[-1] if events else None
+                    if final_event:
+                        final_epoch_data[metric] = final_event.value
 
         results.append(final_epoch_data)
 
