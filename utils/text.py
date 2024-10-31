@@ -58,6 +58,42 @@ def token_to_index(
     return dataset.map(_token_to_index)
 
 
+def replace_oov_with_mean(
+    embeddings: np.ndarray,
+    ids: np.ndarray,
+    unk_token_id: int = 1,
+    pad_token_id: int = 0,
+) -> np.ndarray:
+    """Handles OOV words by computing the average of known contextual embeddings.
+    Returns a new embedding array where OOV words are replaced by the contextual average.
+    """
+
+    if unk_token_id not in ids:
+        return embeddings
+
+    # Calculate context average embedding
+    embedding_sum = np.zeros(embeddings.shape[1])
+    count = 0
+
+    for index, id in enumerate(ids):
+        if id == unk_token_id or id == pad_token_id:
+            continue
+        embedding_sum += embeddings[index]
+        count += 1
+
+    embedding_mean = embedding_sum / count
+
+    # Fill up oov word embedding
+    new_embeddings = []
+    for index, id in enumerate(ids):
+        if id == unk_token_id:
+            new_embeddings.append(embedding_mean)
+        else:
+            new_embeddings.append(embeddings[index])
+
+    return np.array(new_embeddings)
+
+
 def get_context_average_embedding(
     sentence_tokens: list[str],
     oov_token: str,
