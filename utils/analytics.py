@@ -59,6 +59,9 @@ def load_tensorboard_logs(log_dir):
                 if metric == "val_acc" and events:
                     max_val_acc = max([event.value for event in events])
                     final_epoch_data["val_acc"] = max_val_acc
+                elif metric == "val_loss" and events:
+                    min_val_loss = min([event.value for event in events])
+                    final_epoch_data["val_loss"] = min_val_loss
                 else:
                     final_event = events[-1] if events else None
                     if final_event:
