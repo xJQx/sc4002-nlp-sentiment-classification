@@ -26,7 +26,7 @@ def train_rnn_model_with_parameters(
     log_dir: str = "rnn/test",
     early_stopping_patience: int = 3,
 ):
-    min_epochs = 20
+    min_epochs = 10
     max_epochs = 10_000
     num_workers = os.cpu_count() // 2
 
@@ -73,11 +73,13 @@ def train_rnn_model_with_parameters(
             monitor="val_loss",
             mode="min",
             patience=early_stopping_patience,
+            min_delta=1e-4,
         ),
         EarlyStopping(
             monitor="val_acc",
             mode="max",
-            patience=100,
+            patience=early_stopping_patience * 5,
+            min_delta=1e-4,
         ),
     ]
     trainer = L.Trainer(
