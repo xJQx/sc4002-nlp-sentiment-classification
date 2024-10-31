@@ -1,8 +1,11 @@
 import re
+import subprocess
 from pathlib import Path
 
 import pandas as pd
 from tensorboard.backend.event_processing import event_accumulator
+
+import wandb
 
 
 def load_tensorboard_logs(log_dir):
@@ -80,3 +83,50 @@ def load_tensorboard_logs(log_dir):
         "filename",
     ]
     return df[column_order]
+
+
+def get_config_from_file(log_path):
+    pattern = (
+        r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
+        r"-num_layers_(\d+)-sentence_representation_type_(\w+)"
+    )
+
+    config = {}
+    match = re.search(pattern, str(log_path))
+
+    if match:
+        config["batch_size"] = int(match.group(1))
+        config["learning_rate"] = float(match.group(2))
+        config["optimizer_name"] = match.group(3)
+        config["hidden_dim"] = int(match.group(4))
+        config["num_layers"] = int(match.group(5))
+        config["sentence_representation_type"] = match.group(6)
+
+    return config
+
+
+def upload_to_wandb(
+    log_dir: str = "tb_logs/",
+    project: str = "nlp_proj",
+    entity: str = "jinghua",
+):
+    wandb.login()
+    tensorboard_root_dir = Path(log_dir)
+
+    for run_dir in tensorboard_root_dir.rglob("batch_size*"):
+        config = get_config_from_file(run_dir.name)
+
+        run = wandb.init(
+            project=project,
+            entity=entity,
+            name=run_dir.name,
+            config=config,
+        )
+        run_id = run.id
+        run.finish()
+
+        subprocess.run(
+            ["wandb", "sync", run_dir, "-p", project, "-e", entity, "--id", run_id]
+        )
+
+        print(f"Uploaded TensorBoard logs from: {run_dir}")
