@@ -2,7 +2,7 @@ import re
 
 import nltk
 import numpy as np
-
+import torch
 from datasets import Dataset
 
 nltk.download("punkt")
@@ -59,39 +59,38 @@ def token_to_index(
 
 
 def replace_oov_with_mean(
-    embeddings: np.ndarray,
-    ids: np.ndarray,
+    embeddings: torch.Tensor,
+    ids: torch.Tensor,
     unk_token_id: int = 1,
     pad_token_id: int = 0,
-) -> np.ndarray:
+) -> torch.Tensor:
     """Handles OOV words by computing the average of known contextual embeddings.
     Returns a new embedding array where OOV words are replaced by the contextual average.
     """
 
-    if unk_token_id not in ids:
+    device = embeddings.device
+    dtype = embeddings.dtype
+
+    # Create masks
+    known_mask = (ids != unk_token_id) & (ids != pad_token_id)
+    unk_mask = ids == unk_token_id
+
+    # If there are no unknown tokens, return embeddings as is
+    if not unk_mask.any():
         return embeddings
 
-    # Calculate context average embedding
-    embedding_sum = np.zeros(embeddings.shape[1])
-    count = 0
+    # Compute the mean of known embeddings
+    known_embeddings = embeddings[known_mask]
+    if known_embeddings.size(0) == 0:
+        # Avoid division by zero if all tokens are unknown or padding
+        embedding_mean = torch.zeros(embeddings.size(1), device=device, dtype=dtype)
+    else:
+        embedding_mean = known_embeddings.mean(dim=0)
 
-    for index, id in enumerate(ids):
-        if id == unk_token_id or id == pad_token_id:
-            continue
-        embedding_sum += embeddings[index]
-        count += 1
+    embeddings = embeddings.clone()
+    embeddings[unk_mask] = embedding_mean
 
-    embedding_mean = embedding_sum / count
-
-    # Fill up oov word embedding
-    new_embeddings = []
-    for index, id in enumerate(ids):
-        if id == unk_token_id:
-            new_embeddings.append(embedding_mean)
-        else:
-            new_embeddings.append(embeddings[index])
-
-    return np.array(new_embeddings)
+    return embeddings
 
 
 def get_context_average_embedding(
