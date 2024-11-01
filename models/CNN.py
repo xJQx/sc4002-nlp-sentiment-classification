@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+
 import lightning as L
 import numpy as np
 import torch
@@ -8,44 +10,50 @@ from torchmetrics.classification import MulticlassAccuracy
 from utils.text import replace_oov_with_mean
 
 
+@dataclass
+class CNNArgs:
+    embedding_matrix: np.ndarray
+    freeze_embedding: bool = True
+    handle_oov: bool = False
+    hidden_dim: int = 128
+    n_grams: list = field(default_factory=lambda: [3, 4, 5])
+    dropout: float = 0.3
+    output_dim: int = 2
+    padding_idx: int = 0
+
+    def __post_init__(self):
+        if self.hidden_dim <= 0:
+            raise ValueError("hidden_dim must be a positive integer")
+
+
 class CNN(nn.Module):
 
-    def __init__(
-        self,
-        embedding_matrix: np.ndarray,
-        output_dim: int,
-        freeze_embedding: bool = False,
-        handle_oov: bool = True,
-        padding_idx: int = 0,
-        hidden_dim: int = 300,
-        n_grams: list[int] = [3, 4, 5],
-        dropout: int = 0.3,
-    ):
+    def __init__(self, args: CNNArgs):
         super().__init__()
 
-        self.handle_oov = handle_oov
+        self.handle_oov = args.handle_oov
 
         # Embedding layer
-        _, embedding_dim = embedding_matrix.shape
+        _, embedding_dim = args.embedding_matrix.shape
         self.embedding = nn.Embedding.from_pretrained(
-            embeddings=torch.FloatTensor(embedding_matrix),
-            padding_idx=padding_idx,
-            freeze=freeze_embedding,
+            embeddings=torch.FloatTensor(args.embedding_matrix),
+            padding_idx=args.padding_idx,
+            freeze=args.freeze_embedding,
         )
 
-        hidden_dim = hidden_dim - hidden_dim % len(n_grams)
-        num_filters = hidden_dim / len(n_grams)
+        hidden_dim = args.hidden_dim - args.hidden_dim % len(args.n_grams)
+        num_filters = int(hidden_dim / len(args.n_grams))
 
         self.conv_list = []
-        for n_gram in n_grams:
+        for n_gram in args.n_grams:
             self.conv_list.append(nn.Conv2d(1, num_filters, (n_gram, embedding_dim)))
 
-        self.dropout = nn.Dropout(dropout)
+        self.dropout = nn.Dropout(args.dropout)
 
         # fc layer
         self.fc = nn.Linear(hidden_dim, hidden_dim // 2)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_dim // 2, output_dim)
+        self.fc2 = nn.Linear(hidden_dim // 2, args.output_dim)
 
     def forward(self, sequences):
         embeddings = self.embedding(sequences)  # [batch_size, seq_len, embed_dim]
@@ -89,13 +97,13 @@ class CNNClassifier(L.LightningModule):
         self,
         cnn_model: CNN,
         optimizer_name: str,
-        lr: float,
+        learning_rate: float,
         show_progress: bool = False,
     ):
         super().__init__()
         self.model = cnn_model
         self.optimizer_name = optimizer_name
-        self.lr = lr
+        self.lr = learning_rate
         self.show_progress = show_progress
         self.metric = MulticlassAccuracy(num_classes=2)
         self.save_hyperparameters()
