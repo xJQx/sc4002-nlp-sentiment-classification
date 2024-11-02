@@ -9,3 +9,5 @@ matplotlib
 lightning
 tensorboard
 seaborn
+transformers
+accelerate

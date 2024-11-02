@@ -4,3 +4,4 @@ models/googleNews_w2v_model
 models/googleNews_w2v_model.vectors.npy
 models/rnn/
 tb_logs/
+part3_5_logs/
