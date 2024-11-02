@@ -10,6 +10,8 @@ from torch.utils.data import DataLoader
 
 from models.RNN import RNN, RNNClassifier
 
+from utils.analytics import get_result_from_file
+
 
 def train_rnn_model_with_parameters(
     embedding_matrix: np.ndarray,
@@ -25,8 +27,9 @@ def train_rnn_model_with_parameters(
     seed: int = 42,
     log_dir: str = "rnn/test",
     early_stopping_patience: int = 3,
+    freeze_embedding: bool = True,
 ):
-    min_epochs = 10
+    min_epochs = 0
     max_epochs = 10_000
     num_workers = os.cpu_count() // 2
 
@@ -38,6 +41,7 @@ def train_rnn_model_with_parameters(
         num_layers=num_layers,
         output_dim=2,
         sentence_representation_type=sentence_representation_type,
+        freeze_embedding=freeze_embedding,
     )
 
     model = RNNClassifier(
@@ -60,12 +64,14 @@ def train_rnn_model_with_parameters(
     )
 
     # Train model.
-    log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sentence_representation_type_{sentence_representation_type}"
+    log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sr_type_{sentence_representation_type}-freeze_{freeze_embedding}"
 
     # Skip if run before
     if list(Path().rglob(log_file_name)):
         print(f"[Skipping] {log_file_name}")
-        return
+        result = get_result_from_file(log_file_name)
+        return result["val_acc"]
+    
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
     callbacks = [
@@ -94,3 +100,5 @@ def train_rnn_model_with_parameters(
     trainer.fit(
         model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader
     )
+
+    return trainer.callback_metrics.get("val_acc").item()
