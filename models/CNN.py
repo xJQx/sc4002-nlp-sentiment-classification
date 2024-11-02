@@ -14,7 +14,6 @@ from utils.text import replace_oov_with_mean
 class CNNArgs:
     embedding_matrix: np.ndarray
     freeze_embedding: bool = True
-    handle_oov: bool = False
     hidden_dim: int = 128
     n_grams: list = field(default_factory=lambda: [3, 4, 5])
     dropout: float = 0.3
@@ -57,14 +56,6 @@ class CNN(nn.Module):
 
     def forward(self, sequences):
         embeddings = self.embedding(sequences)  # [batch_size, seq_len, embed_dim]
-
-        if self.handle_oov:
-            embeddings_list = []
-            for i in range(sequences.size(0)):
-                embeddings_list.append(
-                    replace_oov_with_mean(embeddings[i], ids=sequences[i])
-                )
-            embeddings = torch.stack(embeddings_list)
 
         # add channel [batch_size, 1, seq_len, embed_dim]
         embeddings = embeddings.unsqueeze(1)
