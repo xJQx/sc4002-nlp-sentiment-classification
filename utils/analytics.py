@@ -64,6 +64,10 @@ _RNN_LOG_FILE_PATTERN = (
 
 _CNN_LOG_FILE_PATTERN = (
     r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
+    r"-n_grams_((?:\d+_?)+)-dropout_([\deE.-]+)"
+)
+_CNN_LOG_FILE_PATTERN_2 = (
+    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
 )
 
 _METRICS = ["val_loss", "val_acc", "train_loss", "train_acc", "epoch"]
@@ -124,16 +128,19 @@ def load_tensorboard_logs(log_dir):
         "hidden_dim",
         "learning_rate",
         "optimizer_name",
-        "num_layers",
-        "sentence_representation_type",
-        "freeze",
+    ]
+
+    last_cols = [
         "epoch",
         "train_loss",
         "val_loss",
         "filename",
     ]
+    column_order += [
+        col for col in df.columns if col not in column_order and col not in last_cols
+    ]
 
-    column_order = [col for col in column_order if col in df.columns]
+    column_order += last_cols
 
     return df[column_order]
 
@@ -331,17 +338,26 @@ def match_rnn_log(log_path: str):
 
 
 def match_cnn_log(log_path: str):
-    match = re.search(_CNN_LOG_FILE_PATTERN, str(log_path))
+    match = re.search(_CNN_LOG_FILE_PATTERN, str(log_path)) or re.search(
+        _CNN_LOG_FILE_PATTERN_2, str(log_path)
+    )
 
     data = {metric: None for metric in _METRICS}
 
+    if match:
+        data["batch_size"] = int(match.group(1))
+        data["learning_rate"] = float(match.group(2))
+        data["optimizer_name"] = match.group(3)
+        data["hidden_dim"] = int(match.group(4))
+        if len(match.groups()) == 6:
+            data["n_grams"] = match.group(5)
+            data["dropout"] = match.group(6)
+        else:
+            data["n_grams"] = "3_4_5"
+            data["dropout"] = 0.3
+
     if not match:
         return {}
-
-    data["batch_size"] = int(match.group(1))
-    data["learning_rate"] = float(match.group(2))
-    data["optimizer_name"] = match.group(3)
-    data["hidden_dim"] = int(match.group(4))
 
     return data
 

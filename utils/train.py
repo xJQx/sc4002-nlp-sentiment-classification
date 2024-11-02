@@ -166,7 +166,7 @@ def train_cnn_model_with_parameters(
     )
 
     # Train model.
-    log_file_name = f"{log_dir}/batch_size_{data_args.batch_size}-lr_{optimizer_args.learning_rate}-optimizer_{optimizer_args.optimizer_name}-hidden_dim_{cnn_args.hidden_dim}"
+    log_file_name = f"{log_dir}/batch_size_{data_args.batch_size}-lr_{optimizer_args.learning_rate}-optimizer_{optimizer_args.optimizer_name}-hidden_dim_{cnn_args.hidden_dim}-n_grams_{'_'.join(map(str, cnn_args.n_grams))}-dropout_{cnn_args.dropout}"
 
     # Skip if run before
     if list(Path().rglob(log_file_name)):
