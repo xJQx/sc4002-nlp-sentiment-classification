@@ -72,7 +72,7 @@ def train_rnn_model_with_parameters(
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
         return result["val_acc"]
-    
+
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
     callbacks = [

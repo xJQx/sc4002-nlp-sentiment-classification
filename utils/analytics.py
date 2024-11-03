@@ -51,7 +51,7 @@ def load_tensorboard_logs(log_dir):
             final_epoch_data["hidden_dim"] = int(match.group(4))
             final_epoch_data["num_layers"] = int(match.group(5))
             final_epoch_data["sentence_representation_type"] = match.group(6)
-            final_epoch_data["freeze"] = match.group(7) == 'True'
+            final_epoch_data["freeze"] = match.group(7) == "True"
         else:
             print(f"Filename pattern does not match for {log_path}")
 
@@ -73,6 +73,7 @@ def load_tensorboard_logs(log_dir):
         results.append(final_epoch_data)
 
     df = pd.DataFrame(results)
+    df = df.dropna(axis=0, subset=["val_acc", "val_loss"])
 
     column_order = [
         "val_acc",
@@ -84,6 +85,7 @@ def load_tensorboard_logs(log_dir):
         "optimizer_name",
         "num_layers",
         "sentence_representation_type",
+        "freeze",
         "epoch",
         "train_loss",
         "val_loss",
@@ -143,7 +145,7 @@ def load_tensorboard_logs_from_huggingface_trainer(log_dir):
 def get_config_from_file(log_path):
     pattern = (
         r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
-        r"-num_layers_(\d+)-sentence_representation_type_(\w+)"
+        r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)"
     )
 
     config = {}
@@ -156,6 +158,7 @@ def get_config_from_file(log_path):
         config["hidden_dim"] = int(match.group(4))
         config["num_layers"] = int(match.group(5))
         config["sentence_representation_type"] = match.group(6)
+        config["freeze"] = match.group(7) == "True"
 
     return config
 
@@ -188,6 +191,7 @@ def get_result_from_file(log_path):
 
     return final_epoch_data
 
+
 def upload_to_wandb(
     log_dir: str = "tb_logs/",
     project: str = "nlp_proj",
@@ -215,7 +219,6 @@ def upload_to_wandb(
         print(f"Uploaded TensorBoard logs from: {run_dir}")
 
 
-
 def plot_config_graph(comparator, configs, log_dir):
     """
     Plots graphs for each log file, grouping by a chosen configuration comparator.
@@ -230,13 +233,13 @@ def plot_config_graph(comparator, configs, log_dir):
     """
     log_dir = Path(log_dir)
     log_file_names = list(log_dir.rglob("events.out.tfevents*"))
-    
+
     # Regex pattern to extract metadata from filenames
     pattern = (
         r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
         r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)"
     )
-    
+
     # Dictionary to hold lists of logs for each comparator value
     grouped_logs = {}
 
@@ -255,15 +258,19 @@ def plot_config_graph(comparator, configs, log_dir):
             "hidden_dim": int(match.group(4)),
             "num_layers": int(match.group(5)),
             "sr_type": match.group(6),
-            "freeze": match.group(7) == 'True'
+            "freeze": match.group(7) == "True",
         }
 
         # Filter based on the provided configs
-        if all(log_config[key] == value for key, value in configs.items() if key in log_config):
+        if all(
+            log_config[key] == value
+            for key, value in configs.items()
+            if key in log_config
+        ):
             # Load log data using event accumulator
             event_acc = event_accumulator.EventAccumulator(str(log_path))
             event_acc.Reload()
-            
+
             # Extract steps and accuracy data
             steps = []
             val_acc = []
@@ -277,17 +284,15 @@ def plot_config_graph(comparator, configs, log_dir):
             if comp_value not in grouped_logs:
                 grouped_logs[comp_value] = []
             grouped_logs[comp_value].append((log_path.name, steps, val_acc))
-    
 
     # Plot each group of logs on the same graph
     plt.figure(figsize=(10, 6))
     for comp_value, log_data in grouped_logs.items():
         for _, steps, val_acc in log_data:
             plt.plot(steps, val_acc, label=comp_value)
-        
+
     plt.title(f"Comparison for {comparator}; {configs}")
     plt.xlabel("Steps")
     plt.ylabel("Validation Accuracy")
     plt.legend()
     plt.show()
-
