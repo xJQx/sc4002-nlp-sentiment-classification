@@ -81,7 +81,6 @@ def load_tensorboard_logs(log_dir):
         "batch_size",
         "hidden_dim",
         "learning_rate",
-        "freeze",
         "optimizer_name",
         "num_layers",
         "sentence_representation_type",
