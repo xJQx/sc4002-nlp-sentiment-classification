@@ -83,6 +83,9 @@ class RNN(nn.Module):
         logits = self.fc2(self.relu(self.fc(sentence_representation)))
 
         return logits
+    
+    def get_embeddings(self):
+        return self.embedding.weight.data
 
 
 class RNNClassifier(L.LightningModule):
