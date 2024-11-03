@@ -11,3 +11,4 @@ tensorboard
 seaborn
 transformers
 accelerate
+optuna
