@@ -200,3 +200,7 @@ def train_cnn_model_with_parameters(
     trainer.fit(
         model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader
     )
+
+    result = get_result_from_file(f"tb_logs/{log_file_name}")
+
+    return result["val_acc"]

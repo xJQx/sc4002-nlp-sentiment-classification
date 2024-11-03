@@ -7,8 +7,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchmetrics.classification import MulticlassAccuracy
 
-from utils.text import replace_oov_with_mean
-
 
 @dataclass
 class CNNArgs:
@@ -29,8 +27,6 @@ class CNN(nn.Module):
 
     def __init__(self, args: CNNArgs):
         super().__init__()
-
-        self.handle_oov = args.handle_oov
 
         # Embedding layer
         _, embedding_dim = args.embedding_matrix.shape
