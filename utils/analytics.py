@@ -51,6 +51,7 @@ def load_tensorboard_logs(log_dir):
             final_epoch_data["hidden_dim"] = int(match.group(4))
             final_epoch_data["num_layers"] = int(match.group(5))
             final_epoch_data["sentence_representation_type"] = match.group(6)
+            final_epoch_data["freeze"] = match.group(7) == 'True'
         else:
             print(f"Filename pattern does not match for {log_path}")
 
@@ -79,6 +80,7 @@ def load_tensorboard_logs(log_dir):
         "batch_size",
         "hidden_dim",
         "learning_rate",
+        "freeze",
         "optimizer_name",
         "num_layers",
         "sentence_representation_type",
