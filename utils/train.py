@@ -29,6 +29,7 @@ def train_rnn_model_with_parameters(
     early_stopping_patience: int = 3,
     freeze_embedding: bool = True,
     write_embeddings: bool = False,
+    write_path: str = "models/embeddings.npy",
 ):
     min_epochs = 0
     max_epochs = 10_000
@@ -71,6 +72,11 @@ def train_rnn_model_with_parameters(
     if list(Path().rglob(log_file_name)):
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
+
+        if write_embeddings:
+            embeddings = _rnn_model.get_embeddings()
+            np.save(write_path, embeddings)
+            
         return result["val_acc"]
 
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
@@ -106,6 +112,6 @@ def train_rnn_model_with_parameters(
 
     if write_embeddings:
         embeddings = _rnn_model.get_embeddings()
-        np.save(f"models/part3a_embeddings.npy", embeddings)
+        np.save(write_path, embeddings)
         
     return result["val_acc"]
