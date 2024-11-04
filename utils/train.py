@@ -29,6 +29,7 @@ def train_rnn_model_with_parameters(
     early_stopping_patience: int = 3,
     freeze_embedding: bool = True,
     write_embeddings: bool = False,
+    write_path: str = "models/embeddings.npy",
 ):
     min_epochs = 0
     max_epochs = 10_000
@@ -55,13 +56,13 @@ def train_rnn_model_with_parameters(
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=num_workers,
+        #num_workers=num_workers,
     )
     val_dataloader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=num_workers,
+        #num_workers=num_workers,
     )
 
     # Train model.
@@ -106,6 +107,6 @@ def train_rnn_model_with_parameters(
 
     if write_embeddings:
         embeddings = _rnn_model.get_embeddings()
-        np.save(f"models/part3a_embeddings.npy", embeddings)
+        np.save(write_path, embeddings)
         
     return result["val_acc"]
