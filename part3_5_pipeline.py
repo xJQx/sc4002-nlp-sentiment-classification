@@ -84,6 +84,10 @@ def train():
     # train
     trainer.train()
 
+    pred = trainer.predict(test_dataset)
+    print("Test metrics:")
+    print(pred.metrics)
+
     return trainer
 
 
