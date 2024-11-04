@@ -56,13 +56,13 @@ def train_rnn_model_with_parameters(
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
-        #num_workers=num_workers,
+        num_workers=num_workers,
     )
     val_dataloader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         shuffle=False,
-        #num_workers=num_workers,
+        num_workers=num_workers,
     )
 
     # Train model.
