@@ -53,7 +53,7 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 - `part1.ipynb`: Answers Part 1 questions (preparing word embeddings and mitigating OOV).
 - `part2.ipynb`: Answers Part 2 questions (RNN model).
 - `part3a.ipynb`: Answers Part 3a questions (RNN model with trainable embeddings).
-- `part3a_generate_embedding.ipynb`: Generates a new embedding matrix with mitigated OOV.
+- `part3b_generate_embedding.ipynb`: Generates a new embedding matrix with mitigated OOV.
 - `part3b.ipynb`: Answers Part 3b questions (RNN model with trainable embeddings and mitigated OOV).
 - `part3c.ipynb`: Answers Part 3c questions (biLSTM and biGRU models).
 - `part3d.ipynb`: Answers Part 3d questions (CNN model).
