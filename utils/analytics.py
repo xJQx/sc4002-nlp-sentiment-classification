@@ -2,11 +2,59 @@ import re
 import subprocess
 from pathlib import Path
 
+import lightning as L
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import wandb
+from datasets import Dataset
+from lightning import LightningModule
 from tensorboard.backend.event_processing import event_accumulator
+from torch.utils.data import DataLoader
+
+
+def test_top_n_models(
+    df: pd.DataFrame,
+    model_classifier: LightningModule,
+    test_dataset: Dataset,
+    n: int = 20,
+):
+    result_df = df.head(n).copy().reset_index(drop=True)
+    result_df["test_loss"] = None
+    result_df["test_acc"] = None
+
+    for index, row in result_df.iterrows():
+        filename = row["filename"]
+        matched_files = list(Path().rglob(filename))
+
+        if not matched_files:
+            print(f"Model checkpoint not found! {filename}")
+            continue
+
+        checkpoint_dir = matched_files[0].parent / "checkpoints"
+        checkpoint_files = (
+            list(checkpoint_dir.glob("*.ckpt")) if checkpoint_dir.exists() else []
+        )
+
+        if not checkpoint_files:
+            print(f"No checkpoint files found in the checkpoint directory! {filename}")
+            continue
+
+        model = model_classifier.load_from_checkpoint(checkpoint_files[0])
+
+        test_dataloader = DataLoader(test_dataset)
+        trainer = L.Trainer(accelerator="cpu")
+        results = trainer.test(model, test_dataloader)
+
+        if results:
+            result_df.at[index, "test_loss"] = results[0].get("test_loss", None)
+            result_df.at[index, "test_acc"] = results[0].get("test_acc", None)
+
+    column_order = ["test_acc", "test_loss"] + [
+        col for col in result_df.columns if col not in ["test_loss", "test_acc"]
+    ]
+
+    return result_df[column_order]
 
 
 def load_tensorboard_logs(log_dir):
