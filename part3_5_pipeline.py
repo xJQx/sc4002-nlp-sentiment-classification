@@ -94,7 +94,7 @@ def train():
 # default optimizer: AdamW
 training_args = TrainingArguments(
     output_dir="./part3_5_logs",  # output directory of results
-    num_train_epochs=20,  # number of train epochs
+    num_train_epochs=6,  # number of train epochs
     report_to="tensorboard",  # log to tensorboard
     eval_strategy="steps",  # check evaluation metrics at each epoch
     logging_steps=10,  # we will log every 10 steps
