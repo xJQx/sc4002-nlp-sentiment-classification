@@ -5,3 +5,16 @@ models/googleNews_w2v_model.vectors.npy
 models/rnn/
 tb_logs/
 part3_5_logs/
+
+lightning_logs/
+wandb/
+1.py
+1.ipynb
+2.ipynb
+2.py
+train_cnn.py
+train_rnn.py
+word2vec-google-news-300
+word2vec-google-news-300.vectors.npy
+best_cnn_batch_size_2048-lr_0.001-optimizer_Adam-hidden_dim_300
+3a.py
