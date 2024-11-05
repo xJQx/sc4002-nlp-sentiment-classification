@@ -1,19 +1,95 @@
 # SC4002 Natural Language Processing Group Assignment - Sentiment Classification
 
-- [SC4002 Natural Language Processing Group Assignment - Sentiment Classification](#sc4002-natural-language-processing-group-assignment---sentiment-classification)
+## Table of Contents
+
+- [Introduction](#introduction)
 - [Setup Instructions](#setup-instructions)
+- [Project Structure](#project-structure)
+  - [Jupyter Notebooks](#jupyter-notebooks)
+  - [Utilities](#utilities)
+  - [Models](#models)
+  - [Additional Scripts](#additional-scripts)
+- [How to Run](#how-to-run)
+- [Code Used for Each Part](#code-used-for-each-part)
 
-# Setup Instructions
+## Introduction
 
-1. In the root directory, create a python virtual environment and activate it.
+This project is a group assignment for the SC4002 Natural Language Processing course, focusing on sentiment classification using various machine learning models. The implementation includes RNNs, LSTMs, GRUs, CNNs, and Transformers, along with techniques for handling out-of-vocabulary (OOV) words. The dataset used is the rotten tomato dataset.
 
-```bash
-python -m venv .venv
-. .venv\Scripts\activate # The .venv activation command might differ depending on your operating system
-```
+## Setup Instructions
 
-2. Install the required packages.
+1. **Create a Python Virtual Environment and Activate It**
 
-```bash
-pip install -r requirements.txt
-```
+   Navigate to the root directory of the project and execute the following commands:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Linux/macOS
+   ```
+
+   *Note for Windows users:*
+
+   ```bash
+   .\.venv\Scripts\activate
+   ```
+
+2. **Install Required Packages**
+
+   Install all necessary packages using the `requirements.txt` file:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run Jupyter Notebook**
+
+   We utilized Jupyter Notebooks to explain and display our outputs interactively. To learn how to run a Jupyter Notebook, refer to the [official documentation](https://docs.jupyter.org/en/latest/running.html).
+
+## Project Structure
+
+### Jupyter Notebooks
+
+- `part0.ipynb`: Downloading the dataset.
+- `part1.ipynb`: Answers Part 1 questions (preparing word embeddings and mitigating OOV).
+- `part2.ipynb`: Answers Part 2 questions (RNN model).
+- `part3a.ipynb`: Answers Part 3a questions (RNN model with trainable embeddings).
+- `part3a_generate_embedding.ipynb`: Generates a new embedding matrix with mitigated OOV.
+- `part3b.ipynb`: Answers Part 3b questions (RNN model with trainable embeddings and mitigated OOV).
+- `part3c.ipynb`: Answers Part 3c questions (biLSTM and biGRU models).
+- `part3d.ipynb`: Answers Part 3d questions (CNN model).
+- `part3e.ipynb`: Answers Part 3e questions (Transformer models).
+- `part3f.ipynb`: Answers Part 3f questions (model comparison).
+
+### Utilities
+
+- `utils/analytics.py`: Contains code for loading TensorBoard log files and uploading data to Weights & Biases (WandB).
+- `utils/text.py`: Provides functions for tokenizing and preprocessing text data, as well as computing average context embeddings.
+- `utils/train.py`: Includes training routines for the models, handling logic such as early stopping and logging.
+
+### Models
+
+- `models/RNN.py`: Implementation of the RNN model with PyTorch Lightning wrappers for training, validation, and testing.
+- `models/CNN.py`: Implementation of the CNN model with PyTorch Lightning wrappers.
+- `models/biLSTM.py`: Implementation of the bidirectional LSTM model.
+- `models/biGRU.py`: Implementation of the bidirectional GRU model.
+- `models/embedding_matrix.npy`: Embedding matrix based on GoogleNews300 Word2Vec.
+- `models/index_from_word.json`: A mapping from words to their corresponding indices in the embedding matrix.
+
+### Additional Scripts
+
+- `part3e_pipeline.py`: A pipeline script to train, evaluate, and test Transformer models for Part 3e.
+  - **Example Usage**: `python part3e_pipeline.py --model roberta`
+
+
+## Code Used for Each Part
+
+| **Part** | **Files and Scripts Used** |
+|----------|----------------------------|
+| **Part 1** | - `utils/text.py`<br>- `part1.ipynb` |
+| **Part 2** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part2.ipynb` |
+| **Part 3a** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3a.ipynb` |
+| **Part 3b** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3b.ipynb` |
+| **Part 3c** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/biLSTM.py`<br>- `models/biGRU.py`<br>- `part3c.ipynb` |
+| **Part 3d** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/CNN.py`<br>- `part3d.ipynb` |
+| **Part 3e** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `part3e_pipeline.py`<br>- `part3e.ipynb` |
+| **Part 3f** | - `part3f.ipynb` |
