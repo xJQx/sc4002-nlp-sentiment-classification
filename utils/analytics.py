@@ -2,12 +2,11 @@ import re
 import subprocess
 from pathlib import Path
 
-import pandas as pd
-from tensorboard.backend.event_processing import event_accumulator
-
-import wandb
-
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import wandb
+from tensorboard.backend.event_processing import event_accumulator
 
 
 def load_tensorboard_logs(log_dir):
@@ -218,80 +217,30 @@ def upload_to_wandb(
         print(f"Uploaded TensorBoard logs from: {run_dir}")
 
 
-def plot_config_graph(comparator, configs, log_dir):
-    """
-    Plots graphs for each log file, grouping by a chosen configuration comparator.
+def plot_val_acc(log_filename: str):
+    if not log_filename:
+        raise ValueError("log_filename cannot be empty or None.")
 
-    Parameters:
-    - comparator (str): Configuration parameter to compare (e.g., 'batch_size', 'lr', etc.).
-    - configs (dict): Dictionary of configurations to filter logs (e.g., {'optimizer': 'Adam'}).
-    - log_dir (str): Directory where log files are stored.
+    matches = list(Path().rglob(log_filename))
+    if not matches:
+        raise FileNotFoundError(f"No log file found matching {log_filename}.")
 
-    Returns:
-    - None: Displays the plots.
-    """
-    log_dir = Path(log_dir)
-    log_file_names = list(log_dir.rglob("events.out.tfevents*"))
+    event_acc = event_accumulator.EventAccumulator(str(matches[0]))
+    event_acc.Reload()
 
-    # Regex pattern to extract metadata from filenames
-    pattern = (
-        r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
-        r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)"
-    )
+    if "val_acc" not in event_acc.Tags()["scalars"]:
+        raise KeyError("'val_acc' not found in the log file.")
 
-    # Dictionary to hold lists of logs for each comparator value
-    grouped_logs = {}
+    steps = []
+    val_acc = []
+    for event in event_acc.Scalars("val_acc"):
+        steps.append(event.step)
+        val_acc.append(event.value)
 
-    # Process each log file
-    for log_path in log_file_names:
-        match = re.search(pattern, str(log_path.parent.parent.name))
-        if not match:
-            print(f"Filename pattern does not match for {log_path}")
-            continue
-
-        # Extract metadata from filename
-        log_config = {
-            "batch_size": int(match.group(1)),
-            "lr": float(match.group(2)),
-            "optimizer": match.group(3),
-            "hidden_dim": int(match.group(4)),
-            "num_layers": int(match.group(5)),
-            "sr_type": match.group(6),
-            "freeze": match.group(7) == "True",
-        }
-
-        # Filter based on the provided configs
-        if all(
-            log_config[key] == value
-            for key, value in configs.items()
-            if key in log_config
-        ):
-            # Load log data using event accumulator
-            event_acc = event_accumulator.EventAccumulator(str(log_path))
-            event_acc.Reload()
-
-            # Extract steps and accuracy data
-            steps = []
-            val_acc = []
-            if "val_acc" in event_acc.Tags()["scalars"]:
-                for event in event_acc.Scalars("val_acc"):
-                    steps.append(event.step)
-                    val_acc.append(event.value)
-
-            # Group logs by the comparator value
-            comp_value = log_config[comparator]
-            if comp_value not in grouped_logs:
-                grouped_logs[comp_value] = []
-            grouped_logs[comp_value].append((log_path.name, steps, val_acc))
-
-    # Plot each group of logs on the same graph
     plt.figure(figsize=(10, 6))
-    for comp_value, log_data in grouped_logs.items():
-        for _, steps, val_acc in log_data:
-            plt.plot(steps, val_acc, label=comp_value)
-
-    plt.title(f"Comparison for {comparator}; {configs}")
-    plt.xlabel("Steps")
-    plt.ylabel("Validation Accuracy")
-    plt.legend()
+    sns.lineplot(x=steps, y=val_acc, marker="o")
+    plt.title("Validation Accuracy Across Steps", fontsize=14)
+    plt.xlabel("Steps", fontsize=12)
+    plt.ylabel("Validation Accuracy", fontsize=12)
+    plt.grid(True)
     plt.show()
