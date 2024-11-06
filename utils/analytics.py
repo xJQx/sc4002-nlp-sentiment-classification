@@ -70,7 +70,7 @@ _CNN_LOG_FILE_PATTERN_2 = (
     r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
 )
 
-_METRICS = ["val_loss", "val_acc", "train_loss", "train_acc", "epoch"]
+_METRICS = ["val_loss", "val_acc", "epoch"]
 
 
 def load_tensorboard_logs(log_dir):
@@ -123,7 +123,6 @@ def load_tensorboard_logs(log_dir):
 
     column_order = [
         "val_acc",
-        "train_acc",
         "batch_size",
         "hidden_dim",
         "learning_rate",
@@ -132,7 +131,6 @@ def load_tensorboard_logs(log_dir):
 
     last_cols = [
         "epoch",
-        "train_loss",
         "val_loss",
         "filename",
     ]
