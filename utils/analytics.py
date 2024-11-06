@@ -12,6 +12,21 @@ from lightning import LightningModule
 from tensorboard.backend.event_processing import event_accumulator
 from torch.utils.data import DataLoader
 
+_RNN_LOG_FILE_PATTERN = (
+    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
+    r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)"
+)
+
+_CNN_LOG_FILE_PATTERN = (
+    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
+    r"-n_grams_((?:\d+_?)+)-dropout_([\deE.-]+)"
+)
+_CNN_LOG_FILE_PATTERN_2 = (
+    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
+)
+
+_METRICS = ["val_loss", "val_acc", "epoch"]
+
 
 def test_top_n_models(
     df: pd.DataFrame,
@@ -55,22 +70,6 @@ def test_top_n_models(
     ]
 
     return result_df[column_order]
-
-
-_RNN_LOG_FILE_PATTERN = (
-    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
-    r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)"
-)
-
-_CNN_LOG_FILE_PATTERN = (
-    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
-    r"-n_grams_((?:\d+_?)+)-dropout_([\deE.-]+)"
-)
-_CNN_LOG_FILE_PATTERN_2 = (
-    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
-)
-
-_METRICS = ["val_loss", "val_acc", "epoch"]
 
 
 def load_tensorboard_logs(log_dir):
