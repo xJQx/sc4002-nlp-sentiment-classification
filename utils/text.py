@@ -2,7 +2,7 @@ import re
 
 import nltk
 import numpy as np
-
+import torch
 from datasets import Dataset
 
 nltk.download("punkt")
