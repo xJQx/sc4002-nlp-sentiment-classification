@@ -5,13 +5,12 @@ from pathlib import Path
 import lightning as L
 import numpy as np
 from datasets import Dataset
-from lightning.pytorch.callbacks import EarlyStopping
+from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 from lightning.pytorch.loggers import TensorBoardLogger
 from torch.utils.data import DataLoader
 
 from models.CNN import CNN, CNNArgs, CNNClassifier
 from models.RNN import RNN, RNNClassifier
-
 from utils.analytics import get_result_from_file
 
 
@@ -89,6 +88,11 @@ def train_rnn_model_with_parameters(
             mode="max",
             patience=early_stopping_patience * 5,
             min_delta=1e-4,
+        ),
+        ModelCheckpoint(
+            monitor="val_loss",
+            save_top_k=1,
+            mode="min",
         ),
     ]
     trainer = L.Trainer(
@@ -187,6 +191,11 @@ def train_cnn_model_with_parameters(
             mode="max",
             patience=early_stopping_patience * 5,
             min_delta=1e-4,
+        ),
+        ModelCheckpoint(
+            monitor="val_loss",
+            save_top_k=1,
+            mode="min",
         ),
     ]
     trainer = L.Trainer(
