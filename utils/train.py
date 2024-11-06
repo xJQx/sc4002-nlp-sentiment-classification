@@ -176,7 +176,7 @@ def train_cnn_model_with_parameters(
     if list(Path().rglob(log_file_name)):
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
-        return result["val_acc"]
+        return result["val_loss"]  # for optuna
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
     callbacks = [
@@ -213,4 +213,4 @@ def train_cnn_model_with_parameters(
 
     result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-    return result["val_acc"]
+    return result["val_loss"]  # for optuna
