@@ -25,7 +25,7 @@ _CNN_LOG_FILE_PATTERN_2 = (
     r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
 )
 
-_METRICS = ["val_loss", "val_acc", "epoch"]
+_METRICS = ["val_loss", "val_acc", "train_loss", "train_acc", "epoch"]
 
 
 def test_top_n_models(
