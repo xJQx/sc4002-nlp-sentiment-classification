@@ -29,6 +29,8 @@ def train_rnn_model_with_parameters(
     log_dir: str = "rnn/test",
     early_stopping_patience: int = 3,
     freeze_embedding: bool = True,
+    rnn_type: str = "RNN",
+    bidirectional: bool = False,
 ):
     min_epochs = 0
     max_epochs = 10_000
@@ -43,6 +45,8 @@ def train_rnn_model_with_parameters(
         output_dim=2,
         sentence_representation_type=sentence_representation_type,
         freeze_embedding=freeze_embedding,
+        rnn_type=rnn_type,
+        bidirectional=bidirectional,
     )
 
     model = RNNClassifier(
@@ -65,7 +69,7 @@ def train_rnn_model_with_parameters(
     )
 
     # Train model.
-    log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sr_type_{sentence_representation_type}-freeze_{freeze_embedding}"
+    log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sr_type_{sentence_representation_type}-freeze_{freeze_embedding}-rnn_type_{rnn_type}-bidirectional_{bidirectional}"
 
     # Skip if run before
     if list(Path().rglob(log_file_name)):
