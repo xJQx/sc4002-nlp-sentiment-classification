@@ -12,3 +12,4 @@ seaborn
 transformers
 accelerate
 optuna
+wandb

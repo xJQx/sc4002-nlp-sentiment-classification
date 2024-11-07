@@ -53,7 +53,7 @@ def train():
         model_name = "mnoukhov/gpt2-imdb-sentiment-classifier"
     # encoder-decoder
     elif args.model == "t5":
-        model_name = "t5-base"
+        model_name = "google-t5/t5-small"
     else:
         raise NotImplementedError
 
