@@ -143,7 +143,7 @@ def train_cnn_model_with_parameters(
     early_stopping_patience: int = 3,
     show_progress: bool = True,
 ):
-    min_epochs = 10
+    min_epochs = 0
     max_epochs = 10_000
     num_workers = os.cpu_count() // 2
 
