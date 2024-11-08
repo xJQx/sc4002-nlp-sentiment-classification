@@ -2,6 +2,7 @@
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Setup Instructions](#setup-instructions)
 - [Project Structure](#project-structure)
@@ -9,7 +10,6 @@
   - [Utilities](#utilities)
   - [Models](#models)
   - [Additional Scripts](#additional-scripts)
-- [How to Run](#how-to-run)
 - [Code Used for Each Part](#code-used-for-each-part)
 
 ## Introduction
@@ -55,7 +55,8 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 - `part3a.ipynb`: Answers Part 3a questions (RNN model with trainable embeddings).
 - `part3b_generate_embedding.ipynb`: Generates a new embedding matrix with mitigated OOV.
 - `part3b.ipynb`: Answers Part 3b questions (RNN model with trainable embeddings and mitigated OOV).
-- `part3c.ipynb`: Answers Part 3c questions (biLSTM and biGRU models).
+- `part3c_biLSTM.ipynb`: Answers Part 3c question on biLSTM.
+- `part3c_biGRU.ipynb`: Answers Part 3c question on biGRU.
 - `part3d.ipynb`: Answers Part 3d questions (CNN model).
 - `part3e.ipynb`: Answers Part 3e questions (Transformer models).
 - `part3f.ipynb`: Answers Part 3f questions (model comparison).
@@ -80,7 +81,6 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 - `part3e_pipeline.py`: A pipeline script to train, evaluate, and test Transformer models for Part 3e.
   - **Example Usage**: `python part3e_pipeline.py --model roberta`
 
-
 ## Code Used for Each Part
 
 | **Part** | **Files and Scripts Used** |
@@ -89,7 +89,7 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 | **Part 2** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part2.ipynb` |
 | **Part 3a** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3a.ipynb` |
 | **Part 3b** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3b.ipynb` |
-| **Part 3c** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/biLSTM.py`<br>- `models/biGRU.py`<br>- `part3c.ipynb` |
+| **Part 3c** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3c_biLSTM.ipynb`<br>- `part3c_biGRU.ipynb` |
 | **Part 3d** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/CNN.py`<br>- `part3d.ipynb` |
 | **Part 3e** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `part3e_pipeline.py`<br>- `part3e.ipynb` |
 | **Part 3f** | - `part3f.ipynb` |

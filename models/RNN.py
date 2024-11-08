@@ -31,7 +31,7 @@ class RNN(nn.Module):
                                                 ('last', 'max', 'average').
             freeze_embedding (Optional[bool]): Whether to freeze the embedding layer
                                                (default: True).
-            rnn_type (str): Type of RNN to use, e.g., "GRU" or "LSTM" (default: "RNN").
+            rnn_type (str): Type of RNN to use, e.g., "RNN" or "GRU" or "LSTM" (default: "RNN").
             bidirectional (bool): If True, use a bidirectional RNN (default: False).
         """
         super(RNN, self).__init__()
@@ -52,19 +52,25 @@ class RNN(nn.Module):
         self.embedding = nn.Embedding.from_pretrained(
             torch.FloatTensor(embedding_matrix), freeze=freeze_embedding
         )
-                # Choose RNN layer
+        # Choose RNN layer
         if rnn_type == "GRU":
             self.rnn = nn.GRU(
-                embedding_dim, hidden_dim, num_layers, batch_first=True, bidirectional=bidirectional
+                embedding_dim,
+                hidden_dim,
+                num_layers,
+                batch_first=True,
+                bidirectional=bidirectional,
             )
         elif rnn_type == "LSTM":
             self.rnn = nn.LSTM(
-                embedding_dim, hidden_dim, num_layers, batch_first=True, bidirectional=bidirectional
+                embedding_dim,
+                hidden_dim,
+                num_layers,
+                batch_first=True,
+                bidirectional=bidirectional,
             )
         elif rnn_type == "RNN":
-            self.rnn = nn.RNN(
-                embedding_dim, hidden_dim, num_layers, batch_first=True
-            )
+            self.rnn = nn.RNN(embedding_dim, hidden_dim, num_layers, batch_first=True)
         else:
             raise ValueError("Invalid `rnn_type`. Choose from 'GRU', 'LSTM', or 'RNN'.")
 
@@ -91,7 +97,11 @@ class RNN(nn.Module):
 
         # extract sentence representation
         if self.sentence_representation_type == "last":
-            sentence_representation = hidden[-1] if not self.bidirectional else torch.cat((hidden[0][-1], hidden[1][-1]), dim=1) # if bidirectional, concat the backward and forward hidden states
+            sentence_representation = (
+                hidden[-1]
+                if not self.bidirectional
+                else torch.cat((hidden[0][-1], hidden[1][-1]), dim=1)
+            )  # if bidirectional, concat the backward and forward hidden states
         elif self.sentence_representation_type == "max":
             sentence_representation, _ = torch.max(output, dim=1)
         elif self.sentence_representation_type == "average":
