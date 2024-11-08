@@ -117,7 +117,7 @@ training_args = TrainingArguments(
     metric_for_best_model="accuracy",  # metric to see which model is better
     greater_is_better=True,
     #### effective batch_size = per_device_train_batch_size x gradient_accumulation_steps ####
-    #### We set effective batch_size to 128 (8 x 16) ####
+    #### We set effective batch_size to 64 (4 x 16) ####
     per_device_train_batch_size=int(4 / torch.cuda.device_count()),
     per_device_eval_batch_size=int(4 / torch.cuda.device_count()),
     gradient_accumulation_steps=16,
