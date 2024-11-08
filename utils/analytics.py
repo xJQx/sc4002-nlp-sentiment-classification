@@ -322,12 +322,12 @@ def upload_to_wandb(
 
 def match_rnn_log(log_path: str):
     match = re.search(_RNN_LOG_FILE_PATTERN, str(log_path)) or re.search(_RNN_LOG_FILE_PATTERN_2, str(log_path))
+    if re.search(_RNN_LOG_FILE_PATTERN_2, str(log_path)):
+        match = re.search(_RNN_LOG_FILE_PATTERN_2, str(log_path))
 
     data = {metric: None for metric in _METRICS}
-    print("DATA in match_rnn_log")
     if not match:
         return {}
-
     data["batch_size"] = int(match.group(1))
     data["learning_rate"] = float(match.group(2))
     data["optimizer_name"] = match.group(3)
@@ -336,11 +336,8 @@ def match_rnn_log(log_path: str):
     data["sentence_representation_type"] = match.group(6)
     data["freeze"] = match.group(7) == "True"
     if len(match.groups()) == 9:
-        print("Match ground 9!!")
         data["rnn_type"] = match.group(8)
         data["bidirectional"] = match.group(9)
-
-
     return data
 
 
