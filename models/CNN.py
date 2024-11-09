@@ -137,8 +137,7 @@ class CNNClassifier(L.LightningModule):
         indexes = batch["indexes"]
 
         logits = self.model(indexes)
-        predicted_labels = torch.argmax(logits, dim=1)
-        return predicted_labels
+        return logits
 
     def configure_optimizers(self):
         if self.optimizer_name == "SGD":

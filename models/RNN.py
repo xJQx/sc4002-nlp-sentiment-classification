@@ -193,8 +193,7 @@ class RNNClassifier(L.LightningModule):
         original_lens = batch["original_len"]
 
         logits = self.model(indexes, original_lens)
-        predicted_labels = torch.argmax(logits, dim=1)
-        return predicted_labels
+        return logits
 
     def configure_optimizers(self):
         if self.optimizer_name == "SGD":
