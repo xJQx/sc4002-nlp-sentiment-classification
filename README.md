@@ -73,13 +73,17 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 - `models/CNN.py`: Implementation of the CNN model with PyTorch Lightning wrappers.
 - `models/biLSTM.py`: Implementation of the bidirectional LSTM model.
 - `models/biGRU.py`: Implementation of the bidirectional GRU model.
+- `models/MetaModel.py`: Implementation of the ensemble meta model.
 - `models/embedding_matrix.npy`: Embedding matrix based on GoogleNews300 Word2Vec.
 - `models/index_from_word.json`: A mapping from words to their corresponding indices in the embedding matrix.
+- `models/embedding_matrix_oov.npy`: Embedding matrix based on GoogleNews300 Word2Vec with OOV words filled with contextual average.
+- `models/index_from_word_oov.json`: A mapping from words to their corresponding indices in the embedding matrix with OOV words filled with contextual average.
 
 ### Additional Scripts
 
 - `part3e_transformers.py`: A pipeline script to train, evaluate, and test Transformer models for Part 3e.
   - **Example Usage**: `python part3e_transformers.py --model roberta`
+- `part3e_ensemble.py`: A script to train and evaluate ensemble models for Part 3e.
 
 ## Code Used for Each Part
 
@@ -91,5 +95,5 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 | **Part 3b** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3b.ipynb` |
 | **Part 3c** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/RNN.py`<br>- `part3c_biLSTM.ipynb`<br>- `part3c_biGRU.ipynb` |
 | **Part 3d** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/CNN.py`<br>- `part3d.ipynb` |
-| **Part 3e** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `part3e_transformers.py`<br>- `part3e.ipynb` |
+| **Part 3e** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `part3e_transformers.py`<br>- `part3e_ensemble.py`<br>- `models/MetaModel.py`<br>- `part3e.ipynb` |
 | **Part 3f** | - `part3f.ipynb` |
