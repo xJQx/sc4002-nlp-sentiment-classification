@@ -70,10 +70,8 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 
 ### Models
 
-- `models/RNN.py`: Implementation of the RNN model with PyTorch Lightning wrappers for training, validation, and testing.
+- `models/RNN.py`: Implementation of the RNN/biLSTM/biGRU model with PyTorch Lightning wrappers for training, validation, and testing.
 - `models/CNN.py`: Implementation of the CNN model with PyTorch Lightning wrappers.
-- `models/biLSTM.py`: Implementation of the bidirectional LSTM model.
-- `models/biGRU.py`: Implementation of the bidirectional GRU model.
 - `models/MetaModel.py`: Implementation of the ensemble meta model.
 - `models/embedding_matrix.npy`: Embedding matrix based on GoogleNews300 Word2Vec.
 - `models/index_from_word.json`: A mapping from words to their corresponding indices in the embedding matrix.
