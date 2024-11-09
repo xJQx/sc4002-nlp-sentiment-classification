@@ -188,6 +188,13 @@ class RNNClassifier(L.LightningModule):
         self.log("test_loss", loss, prog_bar=self.show_progress)
         self.log("test_acc", acc, prog_bar=self.show_progress)
 
+    def predict_step(self, batch, batch_idx):
+        indexes = batch["indexes"]
+        original_lens = batch["original_len"]
+
+        logits = self.model(indexes, original_lens)
+        return logits
+
     def configure_optimizers(self):
         if self.optimizer_name == "SGD":
             optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)

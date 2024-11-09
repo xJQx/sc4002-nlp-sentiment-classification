@@ -22,6 +22,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+from transformers.trainer_utils import set_seed
 
 
 def train():
@@ -29,7 +30,14 @@ def train():
 
     parser.add_argument(
         "--model",
-        choices=["roberta", "roberta-finetuned", "gpt2", "gpt2-finetuned", "t5"],
+        choices=[
+            "roberta",
+            "roberta-finetuned",
+            "gpt2",
+            "gpt2-finetuned",
+            "t5",
+            "t5-small",
+        ],
         default="roberta",
         help="Model to use",
     )
@@ -37,6 +45,7 @@ def train():
     args = parser.parse_args()
 
     print(args)
+    set_seed(42)
 
     # set up model
     # encoder only (pretrained)
@@ -53,6 +62,9 @@ def train():
         model_name = "mnoukhov/gpt2-imdb-sentiment-classifier"
     # encoder-decoder
     elif args.model == "t5":
+        model_name = "t5-base"
+    # encoder-decoder
+    elif args.model == "t5-small":
         model_name = "google-t5/t5-small"
     else:
         raise NotImplementedError
@@ -60,7 +72,7 @@ def train():
     run_name = f"{args.model}"
 
     model = AutoModelForSequenceClassification.from_pretrained(
-        model_name  # , num_labels=2  # binary classification
+        model_name,
     )
     if model.config.pad_token_id == None:
         model.config.pad_token_id = model.config.eos_token_id
@@ -93,21 +105,22 @@ def train():
 
 # default optimizer: AdamW
 training_args = TrainingArguments(
-    output_dir="./part3_5_logs",  # output directory of results
-    num_train_epochs=6,  # number of train epochs
+    output_dir="./part3e_logs",  # output directory of results
+    num_train_epochs=4,  # number of train epochs
     report_to="tensorboard",  # log to tensorboard
     eval_strategy="steps",  # check evaluation metrics at each epoch
     logging_steps=10,  # we will log every 10 steps
-    eval_steps=200,  # we will perform evaluation every 200 steps
-    save_steps=200,  # we will save the model every 200 steps
+    eval_steps=50,  # we will perform evaluation every 50 steps
+    save_steps=50,  # we will save the model every 50 steps
     save_total_limit=1,  # we only save the last checkpoint or the best one (the last one might be the best one)
     load_best_model_at_end=True,  # we will load the best model at the end of training
     metric_for_best_model="accuracy",  # metric to see which model is better
+    greater_is_better=True,
     #### effective batch_size = per_device_train_batch_size x gradient_accumulation_steps ####
-    #### We set effective batch_size to 2048 (8 x 256) ####
-    per_device_train_batch_size=int(16 / torch.cuda.device_count()),
-    per_device_eval_batch_size=int(16 / torch.cuda.device_count()),
-    # gradient_accumulation_steps=256,
+    #### We set effective batch_size to 64 (4 x 16) ####
+    per_device_train_batch_size=int(4 / torch.cuda.device_count()),
+    per_device_eval_batch_size=int(4 / torch.cuda.device_count()),
+    gradient_accumulation_steps=16,
 )
 
 
