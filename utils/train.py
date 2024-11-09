@@ -32,6 +32,7 @@ def train_rnn_model_with_parameters(
     rnn_type: str = "RNN",
     bidirectional: bool = False,
 ):
+
     min_epochs = 0
     max_epochs = 10_000
     num_workers = os.cpu_count() // 2
@@ -76,7 +77,7 @@ def train_rnn_model_with_parameters(
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-        return result["val_loss"]  # for optuna
+        return result["val_acc"]  # for optuna
 
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
@@ -115,7 +116,7 @@ def train_rnn_model_with_parameters(
 
     result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-    return result["val_loss"]  # for optuna
+    return result["val_acc"]  # for optuna
 
 
 @dataclass
@@ -147,7 +148,7 @@ def train_cnn_model_with_parameters(
     early_stopping_patience: int = 3,
     show_progress: bool = True,
 ):
-    min_epochs = 10
+    min_epochs = 0
     max_epochs = 10_000
     num_workers = os.cpu_count() // 2
 
@@ -180,7 +181,7 @@ def train_cnn_model_with_parameters(
     if list(Path().rglob(log_file_name)):
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
-        return result["val_acc"]
+        return result["val_acc"]  # for optuna
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
     callbacks = [
@@ -217,4 +218,4 @@ def train_cnn_model_with_parameters(
 
     result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-    return result["val_acc"]
+    return result["val_acc"]  # for optuna

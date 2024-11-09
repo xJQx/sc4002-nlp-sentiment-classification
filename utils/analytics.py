@@ -30,7 +30,7 @@ _CNN_LOG_FILE_PATTERN_2 = (
     r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
 )
 
-_METRICS = ["val_loss", "val_acc", "epoch"]
+_METRICS = ["val_loss", "val_acc", "train_loss", "train_acc", "epoch"]
 
 
 def test_top_n_models(
@@ -321,9 +321,9 @@ def upload_to_wandb(
 
 
 def match_rnn_log(log_path: str):
-    match = re.search(_RNN_LOG_FILE_PATTERN, str(log_path)) or re.search(_RNN_LOG_FILE_PATTERN_2, str(log_path))
-    if re.search(_RNN_LOG_FILE_PATTERN_2, str(log_path)):
-        match = re.search(_RNN_LOG_FILE_PATTERN_2, str(log_path))
+    match = re.search(_RNN_LOG_FILE_PATTERN, str(log_path)) or re.search(
+        _RNN_LOG_FILE_PATTERN_2, str(log_path)
+    )
 
     data = {metric: None for metric in _METRICS}
     if not match:
@@ -338,6 +338,7 @@ def match_rnn_log(log_path: str):
     if len(match.groups()) == 9:
         data["rnn_type"] = match.group(8)
         data["bidirectional"] = match.group(9)
+
     return data
 
 
