@@ -133,6 +133,13 @@ class CNNClassifier(L.LightningModule):
         self.log("test_loss", loss, prog_bar=self.show_progress)
         self.log("test_acc", acc, prog_bar=self.show_progress)
 
+    def predict_step(self, batch, batch_idx):
+        indexes = batch["indexes"]
+
+        logits = self.model(indexes)
+        predicted_labels = torch.argmax(logits, dim=1)
+        return predicted_labels
+
     def configure_optimizers(self):
         if self.optimizer_name == "SGD":
             optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
