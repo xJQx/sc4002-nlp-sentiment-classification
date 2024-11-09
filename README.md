@@ -1,5 +1,7 @@
 # SC4002 Natural Language Processing Group Assignment - Sentiment Classification
 
+All TensorBoard logs and model checkpoints can be found [here](https://drive.google.com/drive/folders/1bW1ksJpbMbmwqE1LCesE_AXVkNxQJT93?usp=drive_link) and [here](https://wandb.ai/jinghua/nlp_proj_rnn).
+
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
@@ -11,6 +13,8 @@
   - [Models](#models)
   - [Additional Scripts](#additional-scripts)
 - [Code Used for Each Part](#code-used-for-each-part)
+- [Running TensorBoard](#running-tensorboard)
+- [Reproducing Results with Checkpoints](#reproducing-results-with-checkpoints)
 - [Directory Layout](#directory-layout)
 
 ## Introduction
@@ -99,9 +103,47 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 | **Part 3e** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `part3e_transformers.py`<br>- `part3e_ensemble.py`<br>- `models/MetaModel.py`<br>- `part3e.ipynb` |
 | **Part 3f** | - `part3f.ipynb` |
 
+## Running TensorBoard
+
+To run TensorBoard logs to view the model training and validation graphs, you can follow these instructions:
+
+1. **Download the logs**
+
+   Download our TensorBoard logs [here](https://drive.google.com/drive/folders/1bW1ksJpbMbmwqE1LCesE_AXVkNxQJT93).
+
+2. **Launch TensorBoard**
+
+   Place the TensorBoard logs under the `tb_logs/` directory. To view these logs, run the following command:
+
+   ```bash
+   tensorboard --logdir=tb_logs/rnn # for rnn
+   tensorboard --logdir=tb_logs/rnn_trainable_embeddings_and_contextual_oov # for rnn_trainable_embeddings_and_contextual_oov
+   tensorboard --logdir=tb_logs/cnn # for cnn
+   # ...
+   ```
+
+3. **Open TensorBoard in Your Browser**
+
+   After running the command, TensorBoard will display a URL (usually `http://localhost:6006/`). Open this link in your browser to access the training and validation metrics, including loss and accuracy for each model.
+
+---
+
+## Reproducing Results with Checkpoints
+
+To reproduce the results using the provided checkpoints, you can follow these instructions:
+
+1. **Download Checkpoints**
+   Download our checkpoints [here](https://drive.google.com/drive/folders/1bW1ksJpbMbmwqE1LCesE_AXVkNxQJT93). The checkpoints saved together with the TensorBoard logs and only the top 10 model checkpoints are provided. Alternatively, you may download the best model checkpoints that we have collated [here](https://drive.google.com/file/d/1eXt8yHweqGyCux7VIfnsk5bOhz7XGsCa/view).
+
+2. **Run the Jupyter Notebook**
+
+   Then go to the respective jupyter notebook and start running the cells after the model training portion and view the results.
+
 ## Directory Layout
 
-```
+Your directory should look like this:
+
+```markdown
 root_dir/
 ├── .venv/                          
 ├── best_model_predictions/         
@@ -150,5 +192,5 @@ root_dir/
 ├── part3e.ipynb                
 ├── part3e_ensemble.py          
 ├── part3e_transformers.py      
-└── part3f.ipynb                
+└── part3f.ipynb
 ```
