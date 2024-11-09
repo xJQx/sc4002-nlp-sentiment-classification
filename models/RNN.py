@@ -40,6 +40,7 @@ class RNN(nn.Module):
         self.output_dim = output_dim
         self.num_layers = num_layers
         self.bidirectional = bidirectional
+        self.rnn_type = rnn_type
 
         if sentence_representation_type not in ["last", "max", "average"]:
             raise Exception(
@@ -97,11 +98,16 @@ class RNN(nn.Module):
 
         # extract sentence representation
         if self.sentence_representation_type == "last":
-            sentence_representation = (
-                hidden[-1]
-                if not self.bidirectional
-                else torch.cat((hidden[0][-1], hidden[1][-1]), dim=1)
-            )  # if bidirectional, concat the backward and forward hidden states
+            if self.rnn_type == "GRU" and self.bidirectional:
+                sentence_representation = (
+                    hidden[-2:].transpose(0, 1).contiguous().view(sequences.size(0), -1)
+                )
+            elif self.rnn_type == "LSTM" and self.bidirectional:
+                sentence_representation = torch.cat(
+                    (hidden[0][-1], hidden[1][-1]), dim=1
+                )
+            else:
+                sentence_representation = hidden[-1]
         elif self.sentence_representation_type == "max":
             sentence_representation, _ = torch.max(output, dim=1)
         elif self.sentence_representation_type == "average":
