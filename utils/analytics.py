@@ -17,6 +17,11 @@ _RNN_LOG_FILE_PATTERN = (
     r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)"
 )
 
+_RNN_LOG_FILE_PATTERN_2 = (
+    r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
+    r"-num_layers_(\d+)-sr_type_(\w+)-freeze_(\w+)-rnn_type_(\w+)-bidirectional_(\w+)"
+)
+
 _CNN_LOG_FILE_PATTERN = (
     r"batch_size_(\d+)-lr_([\deE.-]+)-optimizer_(\w+)-hidden_dim_(\d+)"
     r"-n_grams_((?:\d+_?)+)-dropout_([\deE.-]+)"
@@ -316,10 +321,11 @@ def upload_to_wandb(
 
 
 def match_rnn_log(log_path: str):
-    match = re.search(_RNN_LOG_FILE_PATTERN, str(log_path))
+    match = re.search(_RNN_LOG_FILE_PATTERN, str(log_path)) or re.search(
+        _RNN_LOG_FILE_PATTERN_2, str(log_path)
+    )
 
     data = {metric: None for metric in _METRICS}
-
     if not match:
         return {}
 
@@ -330,6 +336,9 @@ def match_rnn_log(log_path: str):
     data["num_layers"] = int(match.group(5))
     data["sentence_representation_type"] = match.group(6)
     data["freeze"] = match.group(7) == "True"
+    if len(match.groups()) == 9:
+        data["rnn_type"] = match.group(8)
+        data["bidirectional"] = match.group(9)
 
     return data
 

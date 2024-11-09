@@ -29,7 +29,10 @@ def train_rnn_model_with_parameters(
     log_dir: str = "rnn/test",
     early_stopping_patience: int = 3,
     freeze_embedding: bool = True,
+    rnn_type: str = "RNN",
+    bidirectional: bool = False,
 ):
+
     min_epochs = 0
     max_epochs = 10_000
     num_workers = os.cpu_count() // 2
@@ -43,6 +46,8 @@ def train_rnn_model_with_parameters(
         output_dim=2,
         sentence_representation_type=sentence_representation_type,
         freeze_embedding=freeze_embedding,
+        rnn_type=rnn_type,
+        bidirectional=bidirectional,
     )
 
     model = RNNClassifier(
@@ -65,14 +70,14 @@ def train_rnn_model_with_parameters(
     )
 
     # Train model.
-    log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sr_type_{sentence_representation_type}-freeze_{freeze_embedding}"
+    log_file_name = f"{log_dir}/batch_size_{batch_size}-lr_{learning_rate}-optimizer_{optimizer_name}-hidden_dim_{hidden_dim}-num_layers_{num_layers}-sr_type_{sentence_representation_type}-freeze_{freeze_embedding}-rnn_type_{rnn_type}-bidirectional_{bidirectional}"
 
     # Skip if run before
     if list(Path().rglob(log_file_name)):
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-        return result["val_loss"]  # for optuna
+        return result["val_acc"]  # for optuna
 
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
@@ -111,7 +116,7 @@ def train_rnn_model_with_parameters(
 
     result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-    return result["val_loss"]  # for optuna
+    return result["val_acc"]  # for optuna
 
 
 @dataclass
@@ -176,7 +181,7 @@ def train_cnn_model_with_parameters(
     if list(Path().rglob(log_file_name)):
         print(f"[Skipping] {log_file_name}")
         result = get_result_from_file(f"tb_logs/{log_file_name}")
-        return result["val_loss"]  # for optuna
+        return result["val_acc"]  # for optuna
     logger = TensorBoardLogger("tb_logs", name=log_file_name)
 
     callbacks = [
@@ -213,4 +218,4 @@ def train_cnn_model_with_parameters(
 
     result = get_result_from_file(f"tb_logs/{log_file_name}")
 
-    return result["val_loss"]  # for optuna
+    return result["val_acc"]  # for optuna
