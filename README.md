@@ -11,6 +11,7 @@
   - [Models](#models)
   - [Additional Scripts](#additional-scripts)
 - [Code Used for Each Part](#code-used-for-each-part)
+- [Directory Layout](#directory-layout)
 
 ## Introduction
 
@@ -84,6 +85,8 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 - `part3e_transformers.py`: A pipeline script to train, evaluate, and test Transformer models for Part 3e.
   - **Example Usage**: `python part3e_transformers.py --model roberta`
 - `part3e_ensemble.py`: A script to train and evaluate ensemble models for Part 3e.
+- `scripts/xxx.py`: A script to train certain models using the terminal instead of jupyter notebook (optional, you may run the jupyter notebook directly to train the model instead).
+  - **Example Usage**: `python scripts/train_cnn.py`
 
 ## Code Used for Each Part
 
@@ -97,3 +100,57 @@ This project is a group assignment for the SC4002 Natural Language Processing co
 | **Part 3d** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `models/CNN.py`<br>- `part3d.ipynb` |
 | **Part 3e** | - `utils/text.py`<br>- `utils/train.py`<br>- `utils/analytics.py`<br>- `part3e_transformers.py`<br>- `part3e_ensemble.py`<br>- `models/MetaModel.py`<br>- `part3e.ipynb` |
 | **Part 3f** | - `part3f.ipynb` |
+
+## Directory Layout
+
+```
+root_dir/
+├── .venv/                          
+├── best_model_predictions/         
+├── models/                         
+│   ├── CNN.py                      
+│   ├── RNN.py                      
+│   ├── MetaModel.py                
+│   ├── embedding_matrix.npy        
+│   ├── embedding_matrix_oov.npy    
+│   ├── index_from_word.json        
+│   ├── index_from_word_oov.json    
+│   ├── word2vec-google-news-300    
+│   └── word2vec-google-news-300.vectors.npy
+├── scripts/                        
+│   ├── train_bigru.py              
+│   ├── train_cnn.py                
+│   ├── train_lstm.py               
+│   ├── train_rnn_part_2.py         
+│   ├── train_rnn_part_3a.py        
+│   └── ...        
+├── tb_logs/                        
+│   ├── rnn/                        
+│   ├── rnn_trainable_embeddings/                        
+│   ├── rnn_trainable_embeddings_and_contextual_oov/                        
+│   ├── cnn/                        
+│   ├── bigru/                        
+│   ├── bilstm/                        
+│   ├── transformers/                        
+│   └── ...                        
+├── utils/                          
+│   ├── analytics.py                
+│   ├── text.py                     
+│   └── train.py                    
+├── .gitignore                      
+├── requirements.txt                
+├── README.md                       
+├── part0.ipynb                 
+├── part1.ipynb                 
+├── part2.ipynb                 
+├── part3a.ipynb                
+├── part3b_generate_embedding.ipynb
+├── part3b.ipynb                
+├── part3c_biGRU.ipynb          
+├── part3c_biLSTM.ipynb         
+├── part3d.ipynb                
+├── part3e.ipynb                
+├── part3e_ensemble.py          
+├── part3e_transformers.py      
+└── part3f.ipynb                
+```
