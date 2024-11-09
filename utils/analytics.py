@@ -328,6 +328,7 @@ def match_rnn_log(log_path: str):
     data = {metric: None for metric in _METRICS}
     if not match:
         return {}
+
     data["batch_size"] = int(match.group(1))
     data["learning_rate"] = float(match.group(2))
     data["optimizer_name"] = match.group(3)
